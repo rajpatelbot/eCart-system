@@ -9,8 +9,30 @@ export interface BaseSliceInterface {
   cartProducts: CartProductsInterface[];
 }
 
-export interface setCartProductsAction {
-  payload: CartProductsInterface[];
+export interface WishlistSliceInterface {
+  wishlistProducts: CartProductsInterface[];
+}
+
+export interface StateInterface {
+  base: BaseSliceInterface;
+}
+
+export interface WishListStateInterface {
+  wishList: WishlistSliceInterface;
+}
+
+export interface CartProductsAction {
+  payload: CartProductsInterface;
+  type: string;
+}
+
+export interface RemoveWishlistAction {
+  payload: number;
+  type: string;
+}
+
+export interface DeleteCartAction {
+  payload: number;
   type: string;
 }
 
@@ -30,6 +52,7 @@ export interface ProductInterface {
 
 export interface CartProductsInterface extends ProductInterface {
   quantity: number;
+  wishlist: boolean;
 }
 
 export interface responseInterface {

@@ -1,28 +1,31 @@
 import { useDispatch, useSelector } from "react-redux";
-import { StateInterface } from "../helper/types";
-import { deleteCartItem } from "../store/slice/BaseSlice";
+import { WishListStateInterface } from "../helper/types";
+import {
+  deleteWishlistItem,
+  emptyWishlist,
+} from "../store/slice/WishlistSlice";
 
-export default function Cartpage() {
+export default function Wishlistpage() {
   const dispatch = useDispatch();
 
-  const cartItems = useSelector(
-    (state: StateInterface) => state.base.cartProducts
+  const wishListProducts = useSelector(
+    (state: WishListStateInterface) => state.wishList.wishlistProducts
   );
 
-  const calculateSubtotal = () => {
-    return cartItems.reduce((acc, item) => acc + item.quantity * item.price, 0);
+  const handleWishlistItem = (id: number) => {
+    dispatch(deleteWishlistItem(id));
   };
 
-  const handleDeleteCartItem = (id: number) => {
-    dispatch(deleteCartItem(id));
+  const handleEmptyWishlist = () => {
+    dispatch(emptyWishlist());
   };
 
   return (
     <div className="mx-auto max-w-7xl py-10">
       <h1 className="text-2xl font-bold mb-4">
-        Your Cart ({cartItems.length})
+        Your Wishlist ({wishListProducts.length})
       </h1>
-      {cartItems.length > 0 ? (
+      {wishListProducts.length > 0 ? (
         <div className="bg-white shadow overflow-hidden sm:rounded-lg">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -34,18 +37,12 @@ export default function Cartpage() {
                   Price
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Quantity
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Total
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Action
                 </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {cartItems.map((item) => (
+              {wishListProducts.map((item) => (
                 <tr key={item.id}>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
@@ -67,17 +64,9 @@ export default function Cartpage() {
                     <div className="text-sm text-gray-900">${item.price}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{item.quantity}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">
-                      ${item.price * item.quantity}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
                     <button
                       className="px-2 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-                      onClick={() => handleDeleteCartItem(item.id)}>
+                      onClick={() => handleWishlistItem(item.id)}>
                       Delete
                     </button>
                   </td>
@@ -86,17 +75,15 @@ export default function Cartpage() {
             </tbody>
           </table>
           <div className="p-4 bg-gray-100">
-            <div className="flex justify-between">
-              <span className="font-medium">Subtotal:</span>
-              <span className="font-bold">${calculateSubtotal()}</span>
-            </div>
-            <button className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
-              Checkout
+            <button
+              className="mt-4 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+              onClick={handleEmptyWishlist}>
+              Empty Wishlist
             </button>
           </div>
         </div>
       ) : (
-        <p className="text-center text-lg font-semibold">Cart is empty</p>
+        <p className="text-center text-lg font-semibold">Wishlist is empty</p>
       )}
     </div>
   );

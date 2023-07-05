@@ -1,17 +1,34 @@
+import { Link, useNavigate, useRoutes } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { Disclosure } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import { Link } from "react-router-dom";
+import { AiOutlineHeart, AiOutlineShoppingCart } from "react-icons/ai";
+import { StateInterface, WishListStateInterface } from "../helper/types";
 
-const navigation = [
-  { name: "Home", href: "/", current: true },
-  { name: "Cart", href: "/cart", current: false },
-];
+const navigation = [{ name: "Home", href: "/", current: true }];
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function Navbar() {
+  const navigate = useNavigate();
+
+  const cartProducts = useSelector(
+    (state: StateInterface) => state.base.cartProducts
+  );
+
+  const wishListProducts = useSelector(
+    (state: WishListStateInterface) => state.wishList.wishlistProducts
+  );
+
+  const totalCartProducts = cartProducts.reduce(
+    (total, data) => total + data.quantity,
+    0
+  );
+
+  const totalListProducts = wishListProducts.length;
+
   return (
     <Disclosure as="nav" className="bg-gray-800">
       {({ open }) => (
@@ -64,8 +81,23 @@ export default function Navbar() {
                   </div>
                 </div>
               </div>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                <p className="text-white">Github</p>
+              <div className="absolute inset-y-0 gap-5 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                <div
+                  className="text-white text-xl cursor-pointer flex items-center"
+                  onClick={() => navigate("/wishlist")}>
+                  <span className="relative text-xs -right-6 -top-2 bg-blue-500 rounded-full w-4 h-4 text-center">
+                    {totalListProducts}
+                  </span>
+                  <AiOutlineHeart />
+                </div>
+                <div
+                  className="text-white text-xl cursor-pointer flex items-center"
+                  onClick={() => navigate("/cart")}>
+                  <span className="absolute text-xs -right-1 top-4 bg-blue-500 rounded-full w-4 h-4 text-center">
+                    {totalCartProducts}
+                  </span>
+                  <AiOutlineShoppingCart />
+                </div>
               </div>
             </div>
           </div>
