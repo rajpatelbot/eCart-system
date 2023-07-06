@@ -4,6 +4,7 @@ import {
   deleteWishlistItem,
   emptyWishlist,
 } from "../store/slice/WishlistSlice";
+import { Link } from "react-router-dom";
 
 export default function Wishlistpage() {
   const dispatch = useDispatch();
@@ -54,9 +55,11 @@ export default function Wishlistpage() {
                         />
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">
+                        <Link
+                          to={`/product/${item.id}`}
+                          className="text-sm font-medium text-gray-900 underline">
                           {item.title}
-                        </div>
+                        </Link>
                       </div>
                     </div>
                   </td>

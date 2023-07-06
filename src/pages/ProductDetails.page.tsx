@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { FcLike } from "react-icons/fc";
@@ -16,7 +16,6 @@ export default function ProductDetailsPage() {
   const dispatch = useDispatch();
   const { data, fetchData, isLoading } = useFetch<CartProductsInterface>();
   const [quantity, setQuantity] = useState<number>(1);
-  const [wishlist, setWishlist] = useState<boolean>(false);
   const [currWishlist, setCurrWishlist] = useState<number>(1);
 
   const wishListProducts = useSelector(
@@ -33,7 +32,7 @@ export default function ProductDetailsPage() {
     );
 
     setCurrWishlist(currentWishlistedItem);
-  }, [data, wishListProducts]);
+  }, [data, wishListProducts, currWishlist]);
 
   const handleAddToCart = () => {
     if (data) {
@@ -46,18 +45,24 @@ export default function ProductDetailsPage() {
     }
   };
 
-  const handleToWishlist = () => {
-    setWishlist(!wishlist);
+  const handleToWishlist = useCallback(() => {
+    const isWishlisted = currWishlist !== -1;
 
-    if (data && !wishlist) {
-      const newWishlistProduct = { ...data, wishlist: true };
-      dispatch(addToWishlist(newWishlistProduct));
+    data && setCurrWishlist(isWishlisted ? -1 : data.id);
+
+    if (data && !isWishlisted) {
+      const newItem: CartProductsInterface = {
+        ...data,
+        quantity: quantity,
+        wishlist: true,
+      };
+      dispatch(addToWishlist(newItem));
     }
 
-    if (data && wishlist) {
+    if (data && isWishlisted) {
       dispatch(deleteWishlistItem(data.id));
     }
-  };
+  }, [currWishlist, data, quantity, dispatch]);
 
   return (
     <section className="pt-12 pb-24 bg-blueGray-100 rounded-b-10xl overflow-hidden">
@@ -67,12 +72,12 @@ export default function ProductDetailsPage() {
             <div className="flex flex-wrap -mx-4">
               <div className="w-full lg:w-1/2 px-4 mb-16 lg:mb-0">
                 <div className="flex -mx-4 flex-wrap items-center justify-between lg:justify-start lg:items-start xl:items-center">
-                  <div className="w-full sm:w-auto min-w-max px-4 text-center flex sm:flex-col items-center justify-center">
+                  <div className="w-full sm:w-auto px-4 text-center flex sm:flex-col items-center justify-center">
                     <img className="h-full w-full" src={data.thumbnail} />
                     <div className="flex w-full items-center mt-3 justify-between">
                       {data.images.map((image, key) => (
                         <img
-                          className="h-20 w-26 bg-slate-50"
+                          className="h-20 w-20 bg-slate-50"
                           src={image}
                           alt={data?.title}
                           key={key}

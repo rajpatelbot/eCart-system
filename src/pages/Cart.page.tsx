@@ -1,9 +1,11 @@
 import { useDispatch, useSelector } from "react-redux";
 import { StateInterface } from "../helper/types";
 import { deleteCartItem } from "../store/slice/BaseSlice";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Cartpage() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const cartItems = useSelector(
     (state: StateInterface) => state.base.cartProducts
@@ -57,9 +59,11 @@ export default function Cartpage() {
                         />
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">
+                        <Link
+                          to={`/product/${item.id}`}
+                          className="text-sm font-medium text-gray-900 underline">
                           {item.title}
-                        </div>
+                        </Link>
                       </div>
                     </div>
                   </td>
@@ -90,7 +94,9 @@ export default function Cartpage() {
               <span className="font-medium">Subtotal:</span>
               <span className="font-bold">${calculateSubtotal()}</span>
             </div>
-            <button className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+            <button
+              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+              onClick={() => navigate("/checkout")}>
               Checkout
             </button>
           </div>
